@@ -1,0 +1,35 @@
+{
+  "name": "bitstamp-kiss",
+  "version": "0.0.0",
+  "description": "is a Bitstamp API v2 wrapper with the joy of kiss literate programming",
+  "main": "index.js",
+  "scripts": {
+    "lint": "standa",
+    "markdown2code": "markdown2code README.md > code.json",
+    "postversion": "git push origin v${npm_package_version}; npm publish; git push origin master",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "pre-commit": [ "lint" ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fibo/bitstamp-kiss.git"
+  },
+  "keywords": [
+    "bitstamp",
+    "api"
+  ],
+  "author": {
+    "name": "Gianluca Casati",
+    "url": "http://g14n.info"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fibo/bitstamp-kiss/issues"
+  },
+  "homepage": "https://github.com/fibo/bitstamp-kiss#readme",
+  "devDependencies": {
+    "markdown2code": "^0.2.0",
+    "pre-commit": "^1.2.2",
+    "standa": "^1.1.0"
+  }
+}
