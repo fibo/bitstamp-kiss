@@ -5,11 +5,13 @@
   "main": "index.js",
   "scripts": {
     "lint": "standa",
-    "markdown2code": "markdown2code README.md > code.json",
+    "markdown2code": "markdown2code -l javascript README.md > ${npm_package_main}",
     "postversion": "git push origin v${npm_package_version}; npm publish; git push origin master",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "pre-commit": [ "lint" ],
+  "pre-commit": [
+    "lint"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/fibo/bitstamp-kiss.git"
@@ -28,7 +30,7 @@
   },
   "homepage": "https://github.com/fibo/bitstamp-kiss#readme",
   "devDependencies": {
-    "markdown2code": "^0.2.0",
+    "markdown2code": "^0.3.0",
     "pre-commit": "^1.2.2",
     "standa": "^1.1.0"
   }
