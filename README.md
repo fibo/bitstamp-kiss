@@ -4,7 +4,12 @@
 
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
+[Annotated source](#annotated-source) |
+[License](#license)
+
 ## Annotated source
+
+See [Bitstamp API](https://www.bitstamp.net/api/) as a reference.
 
 ### Dependecies
 
