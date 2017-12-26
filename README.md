@@ -14,7 +14,16 @@
 The following methods are implemented:
 
 * [Public API](#public-api)
+  - [orderBook](#orderBook)
+  - [ticker](#ticker)
+  - [hourlyTicker](#hourlyTicker)
+  - [transactions](#transactions)
 * [Private API](#private-api)
+  - [accountBalance](#accountBalance)
+  - [allOpenOrders](#allOpenOrders)
+  - [buyMarketOrder](#buyMarketOrder)
+  - [openOrders](#openOrders)
+  - [sellMarketOrder](#sellMarketOrder)
 
 ## Annotated source
 
@@ -153,7 +162,7 @@ function publicRequest (path, next) {
 
 #### orderBook
 
-Returns a JSON dictionary like the ticker call, with the calculated values being from within an hour.
+> Returns a JSON dictionary like the ticker call, with the calculated values being from within an hour.
 
 ```javascript
 function orderBook (currencyPair, next) {
@@ -213,11 +222,13 @@ function hourlyTicker (currencyPair, next) {
 exports.hourlyTicker = hourlyTicker
 ```
 
-#### transaction
+#### transactions
 
 ```javascript
 /**
+ * @params {currencyPair}
  * @params {String} time The time interval from which we want the transactions to be returned. Possible values are minute, hour (default) or day.
+ * @params {Function} next
  */
 
 function transactions (currencyPair, time, next) {
@@ -278,9 +289,7 @@ function privateRequest (path, params, next) {
     })
   })
 
-  request.on('error', error => {
-    next(error)
-  })
+  request.on('error', error => { next(error) })
 
   request.write(requestData)
 
