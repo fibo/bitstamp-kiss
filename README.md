@@ -242,6 +242,8 @@ exports.transactions = transactions
 
 ### Private API
 
+> These calls will be executed on the account (Sub or Main), to which the used API key is bound to.
+
 #### privateRequest
 
 ```javascript
@@ -299,7 +301,7 @@ function privateRequest (path, params, next) {
 
 #### accountBalance
 
-> This API call is cached for 10 seconds. This call will be executed on the account (Sub or Main), to which the used API key is bound to.
+> This API call is cached for 10 seconds.
 
 ```javascript
 /**
@@ -357,7 +359,6 @@ function privateRequest (path, params, next) {
 
 function accountBalance (next) {
   privateRequest('/v2/balance/', {}, (err, data) => {
-    console.log(data)
     next(err, {
       usd_balance: parseFloat(data.usd_balance),
       btc_balance: parseFloat(data.btc_balance),
@@ -414,7 +415,20 @@ exports.allOpenOrders = allOpenOrders
 
 #### buyMarketOrder
 
+> By placing a market order you acknowledge that the execution of your order depends on the market conditions and that these conditions may be subject to sudden changes that cannot be foreseen.
+
 ```javascript
+/**
+ * @param {currencyPair}
+ * @param {Number} amount
+ * @param {Function} next callback
+ * @returns {Object} response
+ * @returns {?} response.id Order ID.
+ * @returns {?} response.datetime
+ * @returns {?} response.type 0 (buy) or 1 (sell).
+ * @returns {?} response.price
+ * @returns {?} response.amount
+ */
 function buyMarketOrder (currencyPair, amount, next) {
   const params = {
     amount: limitTo8Decimals(amount)
@@ -452,13 +466,13 @@ exports.sellMarketOrder = sellMarketOrder
 
 #### userTransactions
 
+> Returns a descending list of transactions, represented as dictionaries.
+
 ```javascript
 /**
- * Returns a descending list of transactions, represented as dictionaries.
- *
  * @param {currencyPair}
- * @param {Number} offset Skip that many transactions before returning results (default: 0).
- * @param {Number} limit Limit result to that many transactions (default: 100; maximum: 1000).
+ * @param {Number} offset to skip that many transactions before returning results (default: 0).
+ * @param {Number} limit result to that many transactions (default: 100; maximum: 1000).
  * @param {Number} sort Sorting by date and time: asc - ascending; desc - descending (default: desc).
  * @param {Function} next callback
  */

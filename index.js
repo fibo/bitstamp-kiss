@@ -237,7 +237,6 @@ function privateRequest (path, params, next) {
 
 function accountBalance (next) {
   privateRequest('/v2/balance/', {}, (err, data) => {
-    console.log(data)
     next(err, {
       usd_balance: parseFloat(data.usd_balance),
       btc_balance: parseFloat(data.btc_balance),
@@ -285,6 +284,17 @@ function allOpenOrders (currencyPair, next) {
 }
 
 exports.allOpenOrders = allOpenOrders
+/**
+ * @param {currencyPair}
+ * @param {Number} amount
+ * @param {Function} next callback
+ * @returns {Object} response
+ * @returns {?} response.id Order ID.
+ * @returns {?} response.datetime
+ * @returns {?} response.type 0 (buy) or 1 (sell).
+ * @returns {?} response.price
+ * @returns {?} response.amount
+ */
 function buyMarketOrder (currencyPair, amount, next) {
   const params = {
     amount: limitTo8Decimals(amount)
@@ -309,11 +319,9 @@ function sellMarketOrder (currencyPair, amount, next) {
 
 exports.sellMarketOrder = sellMarketOrder
 /**
- * Returns a descending list of transactions, represented as dictionaries.
- *
  * @param {currencyPair}
- * @param {Number} offset Skip that many transactions before returning results (default: 0).
- * @param {Number} limit Limit result to that many transactions (default: 100; maximum: 1000).
+ * @param {Number} offset to skip that many transactions before returning results (default: 0).
+ * @param {Number} limit result to that many transactions (default: 100; maximum: 1000).
  * @param {Number} sort Sorting by date and time: asc - ascending; desc - descending (default: desc).
  * @param {Function} next callback
  */
