@@ -226,8 +226,8 @@ exports.hourlyTicker = hourlyTicker
 
 ```javascript
 /**
- * @params {currencyPair}
- * @params {String} time The time interval from which we want the transactions to be returned. Possible values are minute, hour (default) or day.
+ * @param {currencyPair}
+ * @param {String} time interval from which we want the transactions to be returned. Possible values are minute, hour (default) or day.
  * @params {Function} next
  */
 
@@ -299,9 +299,104 @@ function privateRequest (path, params, next) {
 
 #### accountBalance
 
+> This API call is cached for 10 seconds. This call will be executed on the account (Sub or Main), to which the used API key is bound to.
+
 ```javascript
+/**
+ * @param {Function} next callback
+ * @returns {Object} balance
+ *
+ * Balance
+ *
+ * @returns {Number} balance.usd_balance
+ * @returns {Number} balance.btc_balance
+ * @returns {Number} balance.eur_balance
+ * @returns {Number} balance.xrp_balance
+ * @returns {Number} balance.bch_balance
+ * @returns {Number} balance.eth_balance
+ * @returns {Number} balance.ltc_balance
+ *
+ * Reserved.
+ *
+ * @returns {Number} balance.usd_reserved
+ * @returns {Number} balance.btc_reserved
+ * @returns {Number} balance.eur_reserved
+ * @returns {Number} balance.xrp_reserved
+ * @returns {Number} balance.bch_reserved
+ * @returns {Number} balance.eth_reserved
+ * @returns {Number} balance.ltc_reserved
+ *
+ * Available for trading.
+ *
+ * @returns {Number} balance.usd_available
+ * @returns {Number} balance.btc_available
+ * @returns {Number} balance.eur_available
+ * @returns {Number} balance.xrp_available
+ * @returns {Number} balance.bch_available
+ * @returns {Number} balance.eth_available
+ * @returns {Number} balance.ltc_available
+ *
+ * Customer trading fees.
+ *
+ * @returns {Number} balance.bchbtc_fee
+ * @returns {Number} balance.bcheur_fee
+ * @returns {Number} balance.bchusd_fee
+ * @returns {Number} balance.btceur_fee
+ * @returns {Number} balance.btcusd_fee
+ * @returns {Number} balance.ethbtc_fee
+ * @returns {Number} balance.etheur_fee
+ * @returns {Number} balance.ethusd_fee
+ * @returns {Number} balance.eurusd_fee
+ * @returns {Number} balance.ltcbtc_fee
+ * @returns {Number} balance.ltceur_fee
+ * @returns {Number} balance.ltcusd_fee
+ * @returns {Number} balance.xrpbtc_fee
+ * @returns {Number} balance.xrpeur_fee
+ * @returns {Number} balance.xrpusd_fee
+ */
+
 function accountBalance (next) {
-  privateRequest('/v2/balance/', {}, next)
+  privateRequest('/v2/balance/', {}, (err, data) => {
+    console.log(data)
+    next(err, {
+      usd_balance: parseFloat(data.usd_balance),
+      btc_balance: parseFloat(data.btc_balance),
+      eur_balance: parseFloat(data.eur_balance),
+      xrp_balance: parseFloat(data.xrp_balance),
+      bch_balance: parseFloat(data.bch_balance),
+      eth_balance: parseFloat(data.eth_balance),
+      ltc_balance: parseFloat(data.ltc_balance),
+      usd_reserved: parseFloat(data.usd_reserved),
+      btc_reserved: parseFloat(data.btc_reserved),
+      eur_reserved: parseFloat(data.eur_reserved),
+      xrp_reserved: parseFloat(data.xrp_reserved),
+      bch_reserved: parseFloat(data.bch_reserved),
+      eth_reserved: parseFloat(data.eth_reserved),
+      ltc_reserved: parseFloat(data.ltc_reserved),
+      usd_available: parseFloat(data.usd_available),
+      btc_available: parseFloat(data.btc_available),
+      eur_available: parseFloat(data.eur_available),
+      xrp_available: parseFloat(data.xrp_available),
+      bch_available: parseFloat(data.bch_available),
+      eth_available: parseFloat(data.eth_available),
+      ltc_available: parseFloat(data.ltc_available),
+      bchbtc_fee: parseFloat(data.bchbtc_fee),
+      bcheur_fee: parseFloat(data.bcheur_fee),
+      bchusd_fee: parseFloat(data.bchusd_fee),
+      btceur_fee: parseFloat(data.btceur_fee),
+      btcusd_fee: parseFloat(data.btcusd_fee),
+      ethbtc_fee: parseFloat(data.ethbtc_fee),
+      etheur_fee: parseFloat(data.etheur_fee),
+      ethusd_fee: parseFloat(data.ethusd_fee),
+      eurusd_fee: parseFloat(data.eurusd_fee),
+      ltcbtc_fee: parseFloat(data.ltcbtc_fee),
+      ltceur_fee: parseFloat(data.ltceur_fee),
+      ltcusd_fee: parseFloat(data.ltcusd_fee),
+      xrpbtc_fee: parseFloat(data.xrpbtc_fee),
+      xrpeur_fee: parseFloat(data.xrpeur_fee),
+      xrpusd_fee: parseFloat(data.xrpusd_fee)
+    })
+  })
 }
 
 exports.accountBalance = accountBalance
@@ -361,9 +456,11 @@ exports.sellMarketOrder = sellMarketOrder
 /**
  * Returns a descending list of transactions, represented as dictionaries.
  *
+ * @param {currencyPair}
  * @param {Number} offset Skip that many transactions before returning results (default: 0).
  * @param {Number} limit Limit result to that many transactions (default: 100; maximum: 1000).
  * @param {Number} sort Sorting by date and time: asc - ascending; desc - descending (default: desc).
+ * @param {Function} next callback
  */
 
 function userTransactions (currencyPair, offset, limit, sort, next) {
