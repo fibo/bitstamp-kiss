@@ -2,7 +2,7 @@
 
 > is a Bitstamp API v2 wrapper with the joy of kiss literate programming
 
-[API](#api)
+[API](#api) |
 [Annotated source](#annotated-source) |
 [License](#license)
 
@@ -14,16 +14,16 @@
 The following methods are implemented:
 
 * [Public API](#public-api)
-  - [orderBook](#orderBook)
+  - [orderBook](#orderbook)
   - [ticker](#ticker)
-  - [hourlyTicker](#hourlyTicker)
+  - [hourlyTicker](#hourlyticker)
   - [transactions](#transactions)
 * [Private API](#private-api)
-  - [accountBalance](#accountBalance)
-  - [allOpenOrders](#allOpenOrders)
-  - [buyMarketOrder](#buyMarketOrder)
-  - [openOrders](#openOrders)
-  - [sellMarketOrder](#sellMarketOrder)
+  - [accountBalance](#accountbalance)
+  - [allOpenOrders](#allopenorders)
+  - [buyMarketOrder](#buymarketorder)
+  - [openOrders](#openorders)
+  - [sellMarketOrder](#sellmarketorder)
 
 ## Annotated source
 
