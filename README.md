@@ -202,7 +202,8 @@ function ticker (currencyPair, next) {
   const path = `/v2/ticker/${currencyPair}/`
 
   publicRequest(path, (err, data) => {
-    next(err, coerceTick(data))
+    if (err) next(err)
+    else next(null, coerceTick(data))
   })
 }
 
@@ -218,7 +219,8 @@ function hourlyTicker (currencyPair, next) {
   const path = `/v2/ticker_hour/${currencyPair}/`
 
   publicRequest(path, (err, data) => {
-    next(err, coerceTick(data))
+    if (err) next(err)
+    else next(null, coerceTick(data))
   })
 }
 
@@ -497,30 +499,45 @@ bitstamp.userTransactions('btcusd', 0, 100, 'desc', (err, transactions) => {
  *
  * Every transaction has the following properties:
  * @prop {String} datetime
- * @prop {String} id
+ * @prop {Number} id
  * @prop {String} type 0 - deposit; 1 - withdrawal; 2 - market trade; 14 - sub account transfer
  * @prop {Number} usd
  * @prop {Number} eur
  * @prop {Number} btc
  * @prop {Number} xrp
+ * @prop {Number} btc_usd exchange rate (if available)
+ * @prop {Number} xrp_usd exchange rate (if available)
+ * @prop {Number} btc_eur exchange rate (if available)
+ * @prop {Number} xrp_eur exchange rate (if available)
  * @prop {Number} fee
- * @prop {String} order_id
+ * @prop {Number} order_id
  */
 
 function userTransactions (currencyPair, offset, limit, sort, next) {
   const params = { offset, limit, sort }
 
   privateRequest(`/v2/user_transactions/${currencyPair}/`, params, (err, data) => {
-    next(err, {
-      datetime: data.datetime,
-      id: data.id,
-      type: data.type,
-      usd: parseFloat(data.usd),
-      eur: parseFloat(data.eur),
-      btc: parseFloat(data.btc),
-      xrp: parseFloat(data.xrp),
-      order_id: data.order_id
-    })
+    if (err) {
+      next(err)
+    } else {
+      next(null, data.map(data => {
+        const { datetime, id, type } = data
+        let transaction = { datetime, id, type }
+
+        if (data.order_id) transaction.order_id = data.order_id
+
+        if (data.usd) transaction.usd = parseFloat(data.usd)
+        if (data.eur) transaction.eur = parseFloat(data.eur)
+        if (data.xrp) transaction.xrp = parseFloat(data.xrp)
+
+        if (data.btc_usd) transaction.btc_usd = parseFloat(data.btc_usd)
+        if (data.xrp_usd) transaction.xrp_usd = parseFloat(data.xrp_usd)
+        if (data.btc_eur) transaction.btc_eur = parseFloat(data.btc_eur)
+        if (data.xrp_eur) transaction.xrp_eur = parseFloat(data.xrp_eur)
+
+        return transaction
+      }))
+    }
   })
 }
 
