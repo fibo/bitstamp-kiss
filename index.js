@@ -324,14 +324,36 @@ exports.sellMarketOrder = sellMarketOrder
  * @param {Number} limit result to that many transactions (default: 100; maximum: 1000).
  * @param {Number} sort Sorting by date and time: asc - ascending; desc - descending (default: desc).
  * @param {Function} next callback
+ *
+ * @returns {Array} transactions
+ *
+ * Every transaction has the following properties:
+ * @prop {String} datetime
+ * @prop {String} id
+ * @prop {String} type 0 - deposit; 1 - withdrawal; 2 - market trade; 14 - sub account transfer
+ * @prop {Number} usd
+ * @prop {Number} eur
+ * @prop {Number} btc
+ * @prop {Number} xrp
+ * @prop {Number} fee
+ * @prop {String} order_id
  */
 
 function userTransactions (currencyPair, offset, limit, sort, next) {
-  const params = {
-    offset, limit, sort
-  }
+  const params = { offset, limit, sort }
 
-  privateRequest(`/v2/user_transactions/${currencyPair}/`, params, next)
+  privateRequest(`/v2/user_transactions/${currencyPair}/`, params, (err, data) => {
+    next(err, {
+      datetime: data.datetime,
+      id: data.id,
+      type: data.type,
+      usd: parseFloat(data.usd),
+      eur: parseFloat(data.eur),
+      btc: parseFloat(data.btc),
+      xrp: parseFloat(data.xrp),
+      order_id: data.order_id
+    })
+  })
 }
 
 exports.userTransactions = userTransactions
