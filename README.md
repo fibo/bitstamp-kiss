@@ -26,6 +26,7 @@ The following methods are implemented:
   - [buyMarketOrder](#buymarketorder)
   - [openOrders](#openorders)
   - [sellMarketOrder](#sellmarketorder)
+  - [userTransactions](#userTransactions)
 
 ## Annotated source
 
