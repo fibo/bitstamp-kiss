@@ -26,7 +26,7 @@ The following methods are implemented:
   - [buyMarketOrder](#buymarketorder)
   - [openOrders](#openorders)
   - [sellMarketOrder](#sellmarketorder)
-  - [userTransactions](#userTransactions)
+  - [userTransactions](#usertransactions)
 
 ## Annotated source
 
@@ -144,9 +144,7 @@ function publicRequest (path, next) {
 
     let responseJSON = ''
 
-    response.on('data', (chunk) => {
-      responseJSON += chunk
-    })
+    response.on('data', chunk => { responseJSON += chunk })
 
     response.on('end', () => {
       const responseData = JSON.parse(responseJSON)
@@ -159,7 +157,7 @@ function publicRequest (path, next) {
         next(null, responseData)
       }
     })
-  })
+  }).on('error', next)
 }
 ```
 
@@ -275,13 +273,21 @@ function privateRequest (path, params, next) {
   }
 
   const request = https.request(requestOptions, (response) => {
+    const statusCode = response.statusCode
+
+    if (statusCode !== 200) {
+      const error = new Error(`Request failed with ${statusCode}`)
+
+      response.resume()
+
+      next(error)
+    }
+
     response.setEncoding('utf8')
 
     let responseJSON = ''
 
-    response.on('data', (chunk) => {
-      responseJSON += chunk
-    })
+    response.on('data', chunk => { responseJSON += chunk })
 
     response.on('end', () => {
       const responseData = JSON.parse(responseJSON)
@@ -296,7 +302,7 @@ function privateRequest (path, params, next) {
     })
   })
 
-  request.on('error', error => { next(error) })
+  request.on('error', next)
 
   request.write(requestData)
 
