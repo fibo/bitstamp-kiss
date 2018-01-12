@@ -297,11 +297,11 @@ exports.allOpenOrders = allOpenOrders
  * @param {Number} amount
  * @param {Function} next callback
  * @returns {Object} response
- * @returns {?} response.id Order ID.
- * @returns {?} response.datetime
- * @returns {?} response.type 0 (buy) or 1 (sell).
- * @returns {?} response.price
- * @returns {?} response.amount
+ * @returns {Number} response.id Order ID.
+ * @returns {String} response.datetime
+ * @returns {String} response.type 0 (buy) or 1 (sell).
+ * @returns {Number} response.price
+ * @returns {Number} response.amount
  */
 function buyMarketOrder (currencyPair, amount, next) {
   const params = {
@@ -317,6 +317,17 @@ function openOrders (currencyPair, next) {
 }
 
 exports.openOrders = openOrders
+/**
+ * @param {currencyPair}
+ * @param {Number} amount
+ * @param {Function} next callback
+ * @returns {Object} response
+ * @returns {Number} response.id Order ID.
+ * @returns {String} response.datetime
+ * @returns {String} response.type 0 (buy) or 1 (sell).
+ * @returns {Number} response.price
+ * @returns {Number} response.amount
+ */
 function sellMarketOrder (currencyPair, amount, next) {
   const params = {
     amount: limitTo8Decimals(amount)
@@ -362,16 +373,16 @@ function userTransactions (currencyPair, offset, limit, sort, next) {
         const { datetime, id, type } = data
         let transaction = { datetime, id, type }
 
+        const currency1 = currencyPair.substring(0, 3)
+        const currency2 = currencyPair.substring(3)
+        const exchangeRateLabel = `${currency1}_${currency2}`
+
+        if (data.fee) transaction.fee = parseFloat(data.fee)
         if (data.order_id) transaction.order_id = data.order_id
 
-        if (data.usd) transaction.usd = parseFloat(data.usd)
-        if (data.eur) transaction.eur = parseFloat(data.eur)
-        if (data.xrp) transaction.xrp = parseFloat(data.xrp)
-
-        if (data.btc_usd) transaction.btc_usd = parseFloat(data.btc_usd)
-        if (data.xrp_usd) transaction.xrp_usd = parseFloat(data.xrp_usd)
-        if (data.btc_eur) transaction.btc_eur = parseFloat(data.btc_eur)
-        if (data.xrp_eur) transaction.xrp_eur = parseFloat(data.xrp_eur)
+        transaction[currency1] = parseFloat(data[currency1])
+        transaction[currency2] = parseFloat(data[currency2])
+        transaction[exchangeRateLabel] = parseFloat(data[exchangeRateLabel])
 
         return transaction
       }))
