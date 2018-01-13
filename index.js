@@ -337,7 +337,17 @@ function sellMarketOrder (currencyPair, amount, next) {
     amount: limitTo8Decimals(amount)
   }
 
-  privateRequest(`/v2/sell/market/${currencyPair}/`, params, next)
+  privateRequest(`/v2/sell/market/${currencyPair}/`, params, (err, data) => {
+    if (err) return next(err)
+
+    next(null, {
+      id: parseInt(data.id),
+      datetime: data.datetime,
+      type: data.type,
+      price: parseFloat(data.price),
+      amount: parseFloat(data.amount)
+    })
+  })
 }
 
 exports.sellMarketOrder = sellMarketOrder
