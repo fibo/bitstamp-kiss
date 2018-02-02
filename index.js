@@ -299,6 +299,7 @@ exports.allOpenOrders = allOpenOrders
 /**
  * @param {currencyPair}
  * @param {Object} param
+ * @param {Number} param.amount
  * @param {Number} param.price
  * @param {Number} param.limit_price If the order gets executed, a new sell order will be placed, with "limit_price" as its price.
  * @param {Boolean} [param.daily_order] Opens buy limit order which will be canceled at 0:00 UTC unless it already has been executed.
@@ -311,7 +312,12 @@ exports.allOpenOrders = allOpenOrders
  * @returns {Number} response.amount
  */
 function buyLimitOrder (currencyPair, param, next) {
+  if (param.limit_price <= param.price) {
+    next(new Error('limit_price <= price'))
+  }
+
   const params = {
+    amount: limitTo8Decimals(param.amount),
     price: limitTo8Decimals(param.price),
     limit_price: limitTo8Decimals(param.limit_price)
   }
@@ -372,6 +378,7 @@ exports.openOrders = openOrders
 /**
  * @param {currencyPair}
  * @param {Object} param
+ * @param {Number} param.amount
  * @param {Number} param.price
  * @param {Number} param.limit_price If the order gets executed, a new buy order will be placed, with "limit_price" as its price.
  * @param {Boolean} [param.daily_order] Opens sell limit order which will be canceled at 0:00 UTC unless it already has been executed.
@@ -384,7 +391,12 @@ exports.openOrders = openOrders
  * @returns {Number} response.amount
  */
 function sellLimitOrder (currencyPair, param, next) {
+  if (param.limit_price >= param.price) {
+    next(new Error('limit_price >= price'))
+  }
+
   const params = {
+    amount: limitTo8Decimals(param.amount),
     price: limitTo8Decimals(param.price),
     limit_price: limitTo8Decimals(param.limit_price)
   }
