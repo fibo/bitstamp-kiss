@@ -36,6 +36,15 @@ function getSignature (nonce) {
 
   return signature
 }
+function limitTo5Decimals (value) {
+  const decimals = value.toString().split('.')[1]
+
+  if (decimals && decimals.length > 5) {
+    return value.toFixed(5)
+  } else {
+    return value
+  }
+}
 function limitTo8Decimals (value) {
   const decimals = value.toString().split('.')[1]
 
@@ -396,9 +405,9 @@ function sellLimitOrder (currencyPair, param, next) {
   }
 
   const params = {
-    amount: limitTo8Decimals(param.amount),
-    price: limitTo8Decimals(param.price),
-    limit_price: limitTo8Decimals(param.limit_price)
+    amount: limitTo5Decimals(param.amount),
+    price: limitTo5Decimals(param.price),
+    limit_price: limitTo5Decimals(param.limit_price)
   }
 
   if (param.daily_order === true) {

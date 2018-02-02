@@ -107,9 +107,25 @@ function getSignature (nonce) {
 }
 ```
 
+#### limitTo5Decimals
+
+Truncate value to avoid Bistamp API errors on *sell limit order*.
+
+```javascript
+function limitTo5Decimals (value) {
+  const decimals = value.toString().split('.')[1]
+
+  if (decimals && decimals.length > 5) {
+    return value.toFixed(5)
+  } else {
+    return value
+  }
+}
+```
+
 #### limitTo8Decimals
 
-Check value to avoid Bistamp API error:
+Truncate value to avoid Bistamp API error:
 
 > Ensure that there are no more than 8 decimal places.
 
@@ -554,9 +570,9 @@ function sellLimitOrder (currencyPair, param, next) {
   }
 
   const params = {
-    amount: limitTo8Decimals(param.amount),
-    price: limitTo8Decimals(param.price),
-    limit_price: limitTo8Decimals(param.limit_price)
+    amount: limitTo5Decimals(param.amount),
+    price: limitTo5Decimals(param.price),
+    limit_price: limitTo5Decimals(param.limit_price)
   }
 
   if (param.daily_order === true) {
