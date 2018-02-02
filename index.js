@@ -298,6 +298,44 @@ function allOpenOrders (currencyPair, next) {
 exports.allOpenOrders = allOpenOrders
 /**
  * @param {currencyPair}
+ * @param {Object} param
+ * @param {Number} param.price
+ * @param {Number} param.limit_price If the order gets executed, a new sell order will be placed, with "limit_price" as its price.
+ * @param {Boolean} [param.daily_order] Opens buy limit order which will be canceled at 0:00 UTC unless it already has been executed.
+ * @param {Function} next callback
+ * @returns {Object} response
+ * @returns {Number} response.id Order ID.
+ * @returns {String} response.datetime
+ * @returns {String} response.type 0 (buy) or 1 (sell).
+ * @returns {Number} response.price
+ * @returns {Number} response.amount
+ */
+function buyLimitOrder (currencyPair, param, next) {
+  const params = {
+    price: limitTo8Decimals(param.price),
+    limit_price: limitTo8Decimals(param.limit_price)
+  }
+
+  if (param.daily_order === true) {
+    params.daily_order = true
+  }
+
+  privateRequest(`/v2/buy/${currencyPair}/`, params, (err, data) => {
+    if (err) return next(err)
+
+    next(null, {
+      id: parseInt(data.id),
+      datetime: data.datetime,
+      type: data.type,
+      price: parseFloat(data.price),
+      amount: parseFloat(data.amount)
+    })
+  })
+}
+
+exports.buyLimitOrder = buyLimitOrder
+/**
+ * @param {currencyPair}
  * @param {Number} amount
  * @param {Function} next callback
  * @returns {Object} response
@@ -312,7 +350,17 @@ function buyMarketOrder (currencyPair, amount, next) {
     amount: limitTo8Decimals(amount)
   }
 
-  privateRequest(`/v2/buy/market/${currencyPair}/`, params, next)
+  privateRequest(`/v2/buy/market/${currencyPair}/`, params, (err, data) => {
+    if (err) return next(err)
+
+    next(null, {
+      id: parseInt(data.id),
+      datetime: data.datetime,
+      type: data.type,
+      price: parseFloat(data.price),
+      amount: parseFloat(data.amount)
+    })
+  })
 }
 
 exports.buyMarketOrder = buyMarketOrder
@@ -321,6 +369,44 @@ function openOrders (currencyPair, next) {
 }
 
 exports.openOrders = openOrders
+/**
+ * @param {currencyPair}
+ * @param {Object} param
+ * @param {Number} param.price
+ * @param {Number} param.limit_price If the order gets executed, a new buy order will be placed, with "limit_price" as its price.
+ * @param {Boolean} [param.daily_order] Opens sell limit order which will be canceled at 0:00 UTC unless it already has been executed.
+ * @param {Function} next callback
+ * @returns {Object} response
+ * @returns {Number} response.id Order ID.
+ * @returns {String} response.datetime
+ * @returns {String} response.type 0 (buy) or 1 (sell).
+ * @returns {Number} response.price
+ * @returns {Number} response.amount
+ */
+function sellLimitOrder (currencyPair, param, next) {
+  const params = {
+    price: limitTo8Decimals(param.price),
+    limit_price: limitTo8Decimals(param.limit_price)
+  }
+
+  if (param.daily_order === true) {
+    params.daily_order = true
+  }
+
+  privateRequest(`/v2/sell/${currencyPair}/`, params, (err, data) => {
+    if (err) return next(err)
+
+    next(null, {
+      id: parseInt(data.id),
+      datetime: data.datetime,
+      type: data.type,
+      price: parseFloat(data.price),
+      amount: parseFloat(data.amount)
+    })
+  })
+}
+
+exports.sellLimitOrder = sellLimitOrder
 /**
  * @param {currencyPair}
  * @param {Number} amount
