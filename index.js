@@ -311,7 +311,6 @@ exports.allOpenOrders = allOpenOrders
  * @param {Number} param.amount
  * @param {Number} param.price
  * @param {Number} param.limit_price If the order gets executed, a new sell order will be placed, with "limit_price" as its price.
- * @param {Boolean} [param.daily_order] Opens buy limit order which will be canceled at 0:00 UTC unless it already has been executed.
  * @param {Function} next callback
  * @returns {Object} response
  * @returns {Number} response.id Order ID.
@@ -329,10 +328,6 @@ function buyLimitOrder (currencyPair, param, next) {
     amount: limitTo8Decimals(param.amount),
     price: limitTo8Decimals(param.price),
     limit_price: limitTo8Decimals(param.limit_price)
-  }
-
-  if (param.daily_order === true) {
-    params.daily_order = true
   }
 
   privateRequest(`/v2/buy/${currencyPair}/`, params, (err, data) => {
@@ -390,7 +385,6 @@ exports.openOrders = openOrders
  * @param {Number} param.amount
  * @param {Number} param.price
  * @param {Number} param.limit_price If the order gets executed, a new buy order will be placed, with "limit_price" as its price.
- * @param {Boolean} [param.daily_order] Opens sell limit order which will be canceled at 0:00 UTC unless it already has been executed.
  * @param {Function} next callback
  * @returns {Object} response
  * @returns {Number} response.id Order ID.
@@ -408,10 +402,6 @@ function sellLimitOrder (currencyPair, param, next) {
     amount: limitTo5Decimals(param.amount),
     price: limitTo5Decimals(param.price),
     limit_price: limitTo5Decimals(param.limit_price)
-  }
-
-  if (param.daily_order === true) {
-    params.daily_order = true
   }
 
   privateRequest(`/v2/sell/${currencyPair}/`, params, (err, data) => {
