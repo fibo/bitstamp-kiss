@@ -26,6 +26,7 @@ The following methods are implemented:
   - [buyLimitOrder](#buylimitorder)
   - [buyMarketOrder](#buymarketorder)
   - [openOrders](#openorders)
+  - [orderStatus](#orderstatus)
   - [sellLimitOrder](#selllimitorder)
   - [sellMarketOrder](#sellmarketorder)
   - [userTransactions](#usertransactions)
@@ -147,7 +148,7 @@ function limitTo8Decimals (value) {
 
 ```javascript
 function publicRequest (path, next) {
-  https.get(`https://www.bitstamp.net/api${path}`, (response) => {
+  https.get(`https://www.bitstamp.net/api/${path}`, (response) => {
     const statusCode = response.statusCode
 
     if (statusCode !== 200) {
@@ -185,9 +186,7 @@ function publicRequest (path, next) {
 
 ```javascript
 function orderBook (currencyPair, next) {
-  const path = `/v2/order_book/${currencyPair}/`
-
-  publicRequest(path, next)
+  publicRequest(`v2/order_book/${currencyPair}/`, next)
 }
 
 exports.orderBook = orderBook
@@ -215,9 +214,7 @@ exports.orderBook = orderBook
  */
 
 function ticker (currencyPair, next) {
-  const path = `/v2/ticker/${currencyPair}/`
-
-  publicRequest(path, (err, data) => {
+  publicRequest(`v2/ticker/${currencyPair}/`, (err, data) => {
     if (err) return next(err)
 
     next(null, coerceTick(data))
@@ -233,9 +230,7 @@ exports.ticker = ticker
 
 ```javascript
 function hourlyTicker (currencyPair, next) {
-  const path = `/v2/ticker_hour/${currencyPair}/`
-
-  publicRequest(path, (err, data) => {
+  publicRequest(`/v2/ticker_hour/${currencyPair}/`, (err, data) => {
     if (err) return next(err)
 
     next(null, coerceTick(data))
@@ -255,7 +250,7 @@ exports.hourlyTicker = hourlyTicker
  */
 
 function transactions (currencyPair, time, next) {
-  const path = `/v2/transactions/${currencyPair}/?time=${time}`
+  const path = `v2/transactions/${currencyPair}/?time=${time}`
 
   publicRequest(path, next)
 }
@@ -389,7 +384,7 @@ function privateRequest (path, params, next) {
  */
 
 function accountBalance (next) {
-  privateRequest('/v2/balance/', {}, (err, data) => {
+  privateRequest('v2/balance/', {}, (err, data) => {
     if (err) return next(err)
 
     next(null, {
@@ -440,7 +435,7 @@ exports.accountBalance = accountBalance
 
 ```javascript
 function allOpenOrders (currencyPair, next) {
-  privateRequest('/v2/open_orders/all/', {}, next)
+  privateRequest('v2/open_orders/all/', {}, next)
 }
 
 exports.allOpenOrders = allOpenOrders
@@ -476,7 +471,7 @@ function buyLimitOrder (currencyPair, param, next) {
     limit_price: limitTo8Decimals(param.limit_price)
   }
 
-  privateRequest(`/v2/buy/${currencyPair}/`, params, (err, data) => {
+  privateRequest(`v2/buy/${currencyPair}/`, params, (err, data) => {
     if (err) return next(err)
 
     next(null, {
@@ -513,7 +508,7 @@ function buyMarketOrder (currencyPair, amount, next) {
     amount: limitTo8Decimals(amount)
   }
 
-  privateRequest(`/v2/buy/market/${currencyPair}/`, params, (err, data) => {
+  privateRequest(`v2/buy/market/${currencyPair}/`, params, (err, data) => {
     if (err) return next(err)
 
     next(null, {
@@ -531,12 +526,32 @@ exports.buyMarketOrder = buyMarketOrder
 
 #### openOrders
 
+> ORDERSThis API call is cached for 10 seconds. This call will be executed on the account (Sub or Main), to which the used API key is bound to.
+
 ```javascript
 function openOrders (currencyPair, next) {
   privateRequest(`/v2/open_orders/${currencyPair}`, {}, next)
 }
 
 exports.openOrders = openOrders
+```
+
+#### orderStatus
+
+> This call will be executed on the account (Sub or Main), to which the used API key is bound to.
+
+```javascript
+/**
+ * @param {Function} next callback
+ * @returns {Object} response
+ * @returns {String} response.status inQueue, Open or Finished
+ * @returns {Array} response.transactions
+ */
+function orderStatus (next) {
+  privateRequest('order_status/', {}, next)
+}
+
+exports.orderStatus = orderStatus
 ```
 
 #### sellLimitOrder
@@ -573,7 +588,7 @@ function sellLimitOrder (currencyPair, param, next) {
     limit_price: limitTo5Decimals(param.limit_price)
   }
 
-  privateRequest(`/v2/sell/${currencyPair}/`, params, (err, data) => {
+  privateRequest(`v2/sell/${currencyPair}/`, params, (err, data) => {
     if (err) return next(err)
 
     next(null, {
@@ -611,7 +626,7 @@ function sellMarketOrder (currencyPair, amount, next) {
     amount: limitTo8Decimals(amount)
   }
 
-  privateRequest(`/v2/sell/market/${currencyPair}/`, params, (err, data) => {
+  privateRequest(`v2/sell/market/${currencyPair}/`, params, (err, data) => {
     if (err) return next(err)
 
     next(null, {
@@ -674,7 +689,7 @@ bitstamp.userTransactions('btcusd', 0, 100, 'desc', (err, transactions) => {
 function userTransactions (currencyPair, offset, limit, sort, next) {
   const params = { offset, limit, sort }
 
-  privateRequest(`/v2/user_transactions/${currencyPair}/`, params, (err, data) => {
+  privateRequest(`v2/user_transactions/${currencyPair}/`, params, (err, data) => {
     if (err) return next(err)
 
     next(null, data.map(data => {
