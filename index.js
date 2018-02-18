@@ -76,8 +76,8 @@ function publicRequest (path, next) {
       const responseData = JSON.parse(responseJSON)
 
       if (responseData.status === 'error') {
-        const error = new Error(responseData.reason)
-        error.code = responseData.code
+        const error = new Error(responseJSON)
+
         next(error)
       } else {
         next(null, responseData)
@@ -180,8 +180,8 @@ function privateRequest (path, params, next) {
       const responseData = JSON.parse(responseJSON)
 
       if (responseData.status === 'error') {
-        const error = new Error(responseData.reason)
-        error.code = responseData.code
+        const error = new Error(responseJSON)
+
         next(error)
       } else {
         next(null, responseData)
@@ -294,11 +294,6 @@ function accountBalance (next) {
 }
 
 exports.accountBalance = accountBalance
-function allOpenOrders (currencyPair, next) {
-  privateRequest('v2/open_orders/all/', {}, next)
-}
-
-exports.allOpenOrders = allOpenOrders
 /**
  * @param {currencyPair}
  * @param {Object} param
@@ -319,9 +314,9 @@ function buyLimitOrder (currencyPair, param, next) {
   }
 
   const params = {
-    amount: limitTo8Decimals(param.amount),
-    price: limitTo8Decimals(param.price),
-    limit_price: limitTo8Decimals(param.limit_price)
+    amount: limitTo5Decimals(param.amount),
+    price: limitTo5Decimals(param.price),
+    limit_price: limitTo5Decimals(param.limit_price)
   }
 
   privateRequest(`v2/buy/${currencyPair}/`, params, (err, data) => {
@@ -368,22 +363,6 @@ function buyMarketOrder (currencyPair, amount, next) {
 }
 
 exports.buyMarketOrder = buyMarketOrder
-function openOrders (currencyPair, next) {
-  privateRequest(`/v2/open_orders/${currencyPair}`, {}, next)
-}
-
-exports.openOrders = openOrders
-/**
- * @param {Function} next callback
- * @returns {Object} response
- * @returns {String} response.status inQueue, Open or Finished
- * @returns {Array} response.transactions
- */
-function orderStatus (next) {
-  privateRequest('order_status/', {}, next)
-}
-
-exports.orderStatus = orderStatus
 /**
  * @param {currencyPair}
  * @param {Object} param
