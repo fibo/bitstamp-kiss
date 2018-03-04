@@ -1,6 +1,6 @@
 {
   "name": "bitstamp-kiss",
-  "version": "0.5.3",
+  "version": "0.7.0",
   "description": "is a Bitstamp API v2 wrapper with the joy of kiss literate programming",
   "main": "index.js",
   "scripts": {
@@ -32,6 +32,6 @@
   "devDependencies": {
     "markdown2code": "^0.3.0",
     "pre-commit": "^1.2.2",
-    "standa": "^1.1.0"
+    "standa": "^1.4.0"
   }
 }
