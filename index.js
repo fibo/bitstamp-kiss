@@ -442,6 +442,7 @@ exports.sellMarketOrder = sellMarketOrder
  * @returns {Array} transactions
  *
  * Every transaction has the following properties:
+ *
  * @prop {String} datetime
  * @prop {Number} id
  * @prop {String} type 0 - deposit; 1 - withdrawal; 2 - market trade; 14 - sub account transfer
@@ -484,3 +485,15 @@ function userTransactions (currencyPair, offset, limit, sort, next) {
 }
 
 exports.userTransactions = userTransactions
+/**
+ * @param {Number} value
+ *
+ * @returns {Number} fee
+ */
+function computeFee (value) {
+  const fee = value * 0.25 / 100 // 0.25%
+
+  return Math.round(fee * 100) / 100 // rounded to two decimals
+}
+
+exports.computeFee = computeFee
