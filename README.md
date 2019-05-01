@@ -41,7 +41,7 @@ See [Bitstamp API](https://www.bitstamp.net/api/) as a reference.
 
 ### Dependencies
 
-Required dependencies are all core paackages.
+Required dependencies are all core packages.
 
 ```javascript
 const crypto = require('crypto')
