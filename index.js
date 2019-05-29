@@ -299,7 +299,7 @@ exports.accountBalance = accountBalance
  * @param {Object} param
  * @param {Number} param.amount
  * @param {Number} param.price
- * @param {Number} param.limit_price If the order gets executed, a new sell order will be placed, with "limit_price" as its price.
+ * @param {Number} [param.limit_price] Optional: if the order gets executed, a new sell order will be placed, with "limit_price" as its price.
  * @param {Function} next callback
  * @returns {Object} response
  * @returns {Number} response.id Order ID.
@@ -309,14 +309,17 @@ exports.accountBalance = accountBalance
  * @returns {Number} response.amount
  */
 function buyLimitOrder (currencyPair, param, next) {
-  if (param.limit_price <= param.price) {
-    next(new Error('limit_price <= price'))
-  }
-
   const params = {
     amount: limitTo5Decimals(param.amount),
-    price: limitTo5Decimals(param.price),
-    limit_price: limitTo5Decimals(param.limit_price)
+    price: limitTo5Decimals(param.price)
+  }
+
+  if (param.limit_price) {
+    if (param.limit_price <= param.price) {
+      next(new Error('limit_price <= price'))
+    }
+
+    params.limit_price = limitTo5Decimals(param.limit_price)
   }
 
   privateRequest(`v2/buy/${currencyPair}/`, params, (err, data) => {
@@ -368,7 +371,7 @@ exports.buyMarketOrder = buyMarketOrder
  * @param {Object} param
  * @param {Number} param.amount
  * @param {Number} param.price
- * @param {Number} param.limit_price If the order gets executed, a new buy order will be placed, with "limit_price" as its price.
+ * @param {Number} [param.limit_price] Optional: if the order gets executed, a new buy order will be placed, with "limit_price" as its price.
  * @param {Function} next callback
  * @returns {Object} response
  * @returns {Number} response.id Order ID.
@@ -378,14 +381,17 @@ exports.buyMarketOrder = buyMarketOrder
  * @returns {Number} response.amount
  */
 function sellLimitOrder (currencyPair, param, next) {
-  if (param.limit_price >= param.price) {
-    next(new Error('limit_price >= price'))
-  }
-
   const params = {
     amount: limitTo5Decimals(param.amount),
-    price: limitTo5Decimals(param.price),
-    limit_price: limitTo5Decimals(param.limit_price)
+    price: limitTo5Decimals(param.price)
+  }
+
+  if (param.limit_price) {
+    if (param.limit_price >= param.price) {
+      next(new Error('limit_price >= price'))
+    }
+
+    params.limit_price = limitTo5Decimals(param.limit_price)
   }
 
   privateRequest(`v2/sell/${currencyPair}/`, params, (err, data) => {
