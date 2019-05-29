@@ -1,6 +1,6 @@
 {
   "name": "bitstamp-kiss",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "description": "is a Bitstamp API v2 wrapper with the joy of kiss literate programming",
   "main": "index.js",
   "scripts": {
